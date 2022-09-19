@@ -5,7 +5,7 @@ from django.db import transaction
 from registration.models import RegistrationDetails
 
 class RegistrationDetailsForm(ModelForm):
-    full_names = forms.CharField()
+    fullnames = forms.CharField()
     email = forms.EmailField()
     phone = forms.CharField()
     address = forms.CharField()
@@ -17,14 +17,14 @@ class RegistrationDetailsForm(ModelForm):
     def clean(self):
         super(RegistrationDetailsForm, self).clean()
         
-        full_names = self.cleaned_data.get("full_names")
+        fullnames = self.cleaned_data.get("fullnames")
         email = self.cleaned_data.get("email")
         phone = self.cleaned_data.get("phone")
         address = self.cleaned_data.get("address")
         
         # conditions to be met
-        if len(full_names) < 1:
-            self._errors['full_names'] = self.error_class([
+        if len(fullnames) < 1:
+            self._errors['fullnames'] = self.error_class([
                 'Name entered is too short'])
         if '@' not in str(email):
             self._errors['email'] = self.error_class([

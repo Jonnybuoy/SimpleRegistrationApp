@@ -30,18 +30,16 @@
 <section class="Form my-4 mx-5">
     <table id="details">
         <tr>
-        <th>Full Names</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Address</th>
+        <th>ID</th>
+        <th>Message</th>
+        <th>Age</th>
         </tr>
         <tr>
-        {% for user_detail in user_details %}
-        <td>{{ user_detail.full_names }}</td>
-        <td>{{ user_detail.email }}</td>
-        <td>{{ user_detail.phone }}</td>
-        <td>{{ user_detail.address }}</td>
-        <td><a class="button_1" href="{% url 'update_record' user_detail.id %}">Edit</a></td>
+        {% for i in response %}
+        <td>{{ i.ID }}</td>
+        <td>{{ i.Message }}</td>
+        <td>{{ i.Age }}</td>
+        <td><a class="button_1" href="{% url 'update_record' i.ID %}">Edit</a></td>
         
         </tr>
         {% endfor %}

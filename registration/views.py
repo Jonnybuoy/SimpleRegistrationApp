@@ -16,28 +16,37 @@ LOGGER = logging.getLogger(__name__)
 
 # Create your views here.
 def user_registration(request):
-    # url = 'http://developers.gictsystems.com/api/dummy/submit/'
-    # headers = {'Content-type': 'application/json','Accept': 'text/plain'}
+    url = 'http://developers.gictsystems.com/api/dummy/submit/'
+    headers = {'Content-type': 'application/json','Accept': 'text/plain'}
 
-    if request.POST:
+    if request.method == "POST":
+        full_names = request.POST.get("fullnames")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        address = request.POST.get("address")
         
-        details = RegistrationDetailsForm(request.POST)
+        data = {
+            "fullnames": full_names,
+            "email": email,
+            "phone": phone,
+            "address": address
+        }
         
-        if details.is_valid():
-            # Temporarily make an object to be add some
-            # logic into the data if there is such a need
-            # before writing to the database  
-            user_details = details.save(commit=False)
-            user_details.save()
-            messages.success(request, "Details entered successfully!" )
+        response = requests.post(
+            url, data=json.dumps(data)
+        )
+        registration_details = RegistrationDetails(fullnames=full_names, email=email, phone=phone, address=address)
+        registration_details.save()
+        try:
+            response.raise_for_status()
+            if response.status_code == 200:
+                messages.success(request, "Details entered successfully!" )
+                return redirect('/registration_report')
+        except Exception as err:
+            messages.error("An error {} occurred while posting the data".format(err))
             return redirect('/register')
-        else:
-            messages.error("The data entered is invalid")
-            return render(request, "home.html", {'form': details})
-    
     else:
-        form = RegistrationDetailsForm(None)
-        return render(request, 'home.html')
+        return render(request, "home.html")
 
 
 def update_record(request, id):
@@ -60,12 +69,12 @@ def update_record(request, id):
     return render(request, 'update_record.html', {'form': form})
 
 
-class UserRegistrationReport(APIView):
-    def get(self, request):
-        user_details = RegistrationDetails.objects.all()
-        context = {'user_details': user_details}
-        return render(request, 'user_details.html', context)
-    
+def get_user_details(request):
+    url = 'http://developers.gictsystems.com/api/dummy/items/'
+    headers={'Authorization': 'Bearer ALDJAK23423JKSLAJAF23423J23SAD3'}
+    response = requests.get(url, headers=headers).json()
+    return render(request, 'user_details.html', {'response': response})
+        
 
 class RegistrationDetailsAPIView(APIView):
     def get(self, request):
